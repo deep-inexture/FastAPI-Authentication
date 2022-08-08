@@ -1,13 +1,12 @@
-from fastapi import FastAPI
-
+import uvicorn
 from fastAPI_authentication import models
 from database import engine
-from fastAPI_authentication.authentications.routers import authentication
-from fastAPI_authentication.users.routers import user
+from fastAPI_authentication import create_app
 
-app = FastAPI()
 
 models.Base.metadata.create_all(engine)
 
-app.include_router(authentication.router)
-app.include_router(user.router)
+app = create_app()
+
+# if __name__ == "__main__":
+#     uvicorn.run("main:app", host="0.0.0.0", port=5000, log_level="info", reload=True)

@@ -1,6 +1,11 @@
-from database import Base
+from database import Base, get_db
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
+from sqlalchemy.exc import SQLAlchemyError
+
+from hashing import Hash
+
+db = next(get_db())
 
 
 class User(Base):
@@ -13,6 +18,16 @@ class User(Base):
     is_admin = Column(Boolean, default=0)
 
     profile = relationship('UserProfile', back_populates='owner')
+
+    @classmethod
+    def change_password(cls, email, new_password):
+        try:
+            fetch_user = db.query(cls).filter(cls.email == email).first()
+            fetch_user.password = Hash.bcrypt(new_password)
+            db.commit()
+        except SQLAlchemyError as e:
+            print('msg :', e)
+            return None
 
 
 class UserProfile(Base):
@@ -27,3 +42,20 @@ class UserProfile(Base):
     gender = Column(String(20), default='')
 
     owner = relationship('User', back_populates='profile')
+
+    @classmethod
+    def update_profile(cls, name, phone, gender, url, email):
+        try:
+            profile_setting = db.query(cls).filter(
+                cls.user_id == db.query(User.id).filter(
+                    User.email == email)).first()
+
+            profile_setting.profile_photo = url
+            profile_setting.name = name
+            profile_setting.phone = phone
+            profile_setting.gender = gender
+
+            db.commit()
+        except SQLAlchemyError as e:
+            print('msg :', e)
+            return None

@@ -1,15 +1,13 @@
-import os
 from datetime import timedelta, datetime
 from jose import JWTError, jwt
 from . import schemas
-from dotenv import load_dotenv
+from config import Settings
 
-load_dotenv()
 
-FORGOT_PASSWORD_SECRET_KEY = os.environ.get('FORGOT_PASSWORD_SECRET_KEY')
-SECRET_KEY = os.environ.get('SECRET_KEY')
-JWT_REFRESH_SECRET_KEY = os.environ.get('JWT_REFRESH_SECRET_KEY')
-ALGORITHM = "HS256"
+FORGOT_PASSWORD_SECRET_KEY = Settings().FORGOT_PASSWORD_SECRET_KEY
+SECRET_KEY = Settings().SECRET_KEY
+JWT_REFRESH_SECRET_KEY = Settings().JWT_REFRESH_SECRET_KEY
+ALGORITHM = Settings().ALGORITHM
 FORGOT_PASSWORD_EXPIRE_MINUTES = 60
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
