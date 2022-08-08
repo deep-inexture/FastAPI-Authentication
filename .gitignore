@@ -1,2 +1,9 @@
-__pychache__
+__pycache__
 .env
+fastAPI_authentication/__pycache__
+fastAPI_authentication/authentications/__pycache__
+fastAPI_authentication/users/__pycache__
+fastAPI_authentication/authentications/routers/__pycache__
+fastAPI_authentication/authentications/repository/__pycache__
+fastAPI_authentication/users/routers/__pycache__
+fastAPI_authentication/users/repository/__pycache__

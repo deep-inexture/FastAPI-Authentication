@@ -1,7 +1,7 @@
 import os
 from datetime import timedelta, datetime
 from jose import JWTError, jwt
-import schemas
+from . import schemas
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -45,7 +45,7 @@ def create_refresh_token(data: dict):
 
 def verify_refresh_token(token: str, credentials_exception):
     try:
-        payload = jwt.decode(token, JWT_REFRESH_SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         if not email:
             raise credentials_exception
@@ -64,7 +64,13 @@ def create_forgot_password_token(data: dict):
     return encoded_jwt
 
 
-def verify_forgot_password_token(token: str):
-    payload = jwt.decode(token, FORGOT_PASSWORD_SECRET_KEY, algorithms=[ALGORITHM])
-    email: str = payload.get("sub")
-    return email
+def verify_forgot_password_token(token: str, credentials_exception):
+    try:
+        payload = jwt.decode(token, FORGOT_PASSWORD_SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if not email:
+            raise credentials_exception
+        token_data = schemas.TokenData(email=email)
+        return token_data
+    except JWTError:
+        raise credentials_exception
