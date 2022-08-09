@@ -65,8 +65,6 @@ class Authentication:
         return {"Reset Password Link": RESET_WEBSITE_LINK+'/'+forgot_password_token}
 
     def reset_password(self, reset_token, db: Session):
-        print(self.request.password)
-        print(db.query(models.User).filter(models.User.email == 'deep@deep.in').first())
         email = tokens.verify_forgot_password_token(reset_token, HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Invalid/Expired Token"))
         if not email:

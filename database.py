@@ -5,9 +5,9 @@ import cloudinary
 
 
 cloudinary.config(
-    cloud_name = Settings().CLOUDINARY_CLOUD_NAME,
-    api_key = Settings().CLOUDINARY_API_KEY,
-    api_secret = Settings().CLOUDINARY_API_SECRET
+    cloud_name=Settings().CLOUDINARY_CLOUD_NAME,
+    api_key=Settings().CLOUDINARY_API_KEY,
+    api_secret=Settings().CLOUDINARY_API_SECRET
 )
 
 engine = create_engine(Settings().DB_URL, echo=True)
@@ -21,5 +21,3 @@ def get_db():
         yield db
     finally:
         db.close()
-
-

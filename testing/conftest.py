@@ -11,7 +11,7 @@ SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Base.metadata.drop_all(bind=engine)
+Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 
@@ -31,40 +31,27 @@ def client():
 @pytest.fixture
 def token_header(client: TestClient):
     data = {
-        "username": 'TestUser',
+        "username": 'TestUser1',
         "email": 'testuser1@user1.in',
         "password": 'TestUser@1234',
         "confirm_password": 'TestUser@1234'
     }
-    response = client.post('/register', json.dumps(data))
-    data = {
+    client.post('authentication/register', json.dumps(data))
+    login_data = {
         "username": "testuser1@user1.in",
         "password": "TestUser@1234"
     }
-    response = client.post("/login", json.dumps(data))
-    print('++++++++++++++++++++++++++++++++++++++++++++')
-    print(response.json())
-    print('++++++++++++++++++++++++++++++++++++++++++++')
+    response = client.post("authentication/login", data=login_data)
     access_token = response.json()["access_token"]
-    return f"Bearer {access_token}"
+    refresh_token = response.json()["refresh_token"]
+    return {'header': f"Bearer {access_token}", 'access': access_token, 'refresh': refresh_token}
 
 
 @pytest.fixture
-def admin_token_header(client: TestClient):
+def forgot_password_token(client: TestClient):
     data = {
-        "username": 'admin',
-        "email": 'admin@admin.in',
-        "password": 'Admin@1234',
-        "confirm_password": 'Admin@1234'
+        "email": "testuser1@user1.in"
     }
-    response = client.post('/register', json.dumps(data))
-    data = {
-        "username": "admin@admin.in",
-        "password": "Admin@1234"
-    }
-    response = client.post("/login", json.dumps(data))
-    print('++++++++++++++++++++++++++++++++++++++++++++')
-    print(response.json())
-    print('++++++++++++++++++++++++++++++++++++++++++++')
-    access_token = response.json()["access_token"]
-    return f"Bearer {access_token}"
+    response = client.post("authentication/forgot_password", json.dumps(data))
+    token = response.json()['Reset Password Link'].split('/')[-1]
+    return {'token': token}

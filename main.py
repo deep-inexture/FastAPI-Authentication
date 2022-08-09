@@ -1,7 +1,6 @@
 import uvicorn
-from fastAPI_authentication import models
+from fastAPI_authentication import models, create_app
 from database import engine
-from fastAPI_authentication import create_app
 
 
 models.Base.metadata.create_all(engine)

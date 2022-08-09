@@ -18,8 +18,8 @@ def create_app():
         exception_handlers={AuthJWTException: exceptions.authjwt_exception_handler},
     )
 
-    from fastAPI_authentication.authentications.routers import authentication
-    from fastAPI_authentication.users.routers import user
+    from fastAPI_authentication.authentications import authentication
+    from fastAPI_authentication.users import user
 
     app.include_router(authentication.router)
     app.include_router(user.router)

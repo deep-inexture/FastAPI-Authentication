@@ -4,8 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from database import get_db
-from .. import oauth2, schemas
-from fastAPI_authentication.authentications.repository import services
+from fastAPI_authentication.authentications import oauth2, schemas, services
 
 router = APIRouter(
     prefix="/authentication",
@@ -28,7 +27,7 @@ def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(
 @router.get('/refresh_token')
 def refresh_token(current_user: schemas.User = Depends(oauth2.get_current_user_refresh_token)):
     token = services.refresh_token(current_user.email)
-    return {"refresh_token": token}
+    return {"access_token": token}
 
 
 @router.post('/forgot_password')

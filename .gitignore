@@ -7,3 +7,4 @@ fastAPI_authentication/authentications/routers/__pycache__
 fastAPI_authentication/authentications/repository/__pycache__
 fastAPI_authentication/users/routers/__pycache__
 fastAPI_authentication/users/repository/__pycache__
+test.db

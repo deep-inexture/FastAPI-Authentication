@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     CLOUDINARY_API_SECRET: str
 
     class Config:
-        parent = Path.cwd()
-        env_file = f'{parent}/.env'  # set the env file path.
-        env_file_encoding = 'utf-8'
+        # parent = Path.cwd()
+        # env_file = f'{parent}/.env'  # set the env file path.
+        env_file = '.env'
+        # env_file_encoding = 'utf-8'
