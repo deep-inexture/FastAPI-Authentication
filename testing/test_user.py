@@ -7,9 +7,12 @@ def test_update_profile_200(client, token_header):
         "name": 'TestUser',
         "phone": '1234567890',
         "gender": 'Male',
-        "file": (open(file, 'rb'))
+        # "file" : open(file, 'rb')
     }
-    response = client.put('/user/update_profile', data=data, headers={"Authorization": token_header['header']})
+    files = {"file": ("file", open(file, "rb"), "image/jpeg")}
+    response = client.put('/user/update_profile', data=data, files=files, headers={"Authorization": token_header['header']})
+    print(response)
+    print(response.json())
     # assert response.status_code == 200
     # assert response.json()['message'] == 'Profile Updated Successfully'
 

@@ -16,9 +16,6 @@ router = APIRouter(
 
 @router.put('/update_profile')
 def update_profile(request: schemas.Profile = Depends(), file: UploadFile = File(...), current_user: schemas.User = Depends(get_current_user)):
-    print('-----------------------------')
-    print(file)
-    print('-----------------------------')
     profile_photo = cloudinary.uploader.upload(file.file)
     url = profile_photo.get("url")
     service_obj = services.UserProfile(request)
