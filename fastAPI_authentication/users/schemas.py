@@ -1,6 +1,7 @@
+from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class User(BaseModel):
@@ -28,10 +29,16 @@ class ChangePassword(BaseModel):
         orm_mode = True
 
 
+class Gender(str, Enum):
+    Select='Select'
+    Male='Male'
+    Female='Female'
+
+
 class Profile(BaseModel):
     name: str
     phone: str
-    gender: str
+    gender: Gender = Field(None, alias='gender')
 
     class Config():
         orm_mode = True
