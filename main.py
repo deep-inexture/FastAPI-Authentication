@@ -1,4 +1,3 @@
-import uvicorn
 from fastAPI_authentication import models, create_app
 from database import engine
 

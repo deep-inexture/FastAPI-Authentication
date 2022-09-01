@@ -4,9 +4,12 @@ pwd_cxt = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class Hash():
-    def bcrypt(password: str):
-        return pwd_cxt.hash(password)
+    def __init__(self):
+        self.plain_password = None
 
-    def verify(hashed_password, plain_password):
-        return pwd_cxt.verify(plain_password, hashed_password)
+    def bcrypt(self):
+        return pwd_cxt.hash(self)
+
+    def verify(self, plain_password):
+        return pwd_cxt.verify(plain_password, self)
     

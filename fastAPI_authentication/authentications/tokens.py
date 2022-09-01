@@ -24,13 +24,13 @@ def create_access_token(data: dict):
 def verify_token(token: str, credentials_exception):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if not email:
+        if email := payload.get("sub"):
+            token_data = schemas.TokenData(email=email)
+        else:
             raise credentials_exception
-        token_data = schemas.TokenData(email=email)
         return token_data
-    except JWTError:
-        raise credentials_exception
+    except JWTError as e:
+        raise credentials_exception from e
 
 
 def create_refresh_token(data: dict):
@@ -44,14 +44,13 @@ def create_refresh_token(data: dict):
 def verify_refresh_token(token: str, credentials_exception):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if not email:
+        if email := payload.get("sub"):
+            token_data = schemas.TokenData(email=email)
+        else:
             raise credentials_exception
-        token_data = schemas.TokenData(email=email)
-
         return token_data
-    except JWTError:
-        raise credentials_exception
+    except JWTError as e:
+        raise credentials_exception from e
 
 
 def create_forgot_password_token(data: dict):
@@ -65,10 +64,10 @@ def create_forgot_password_token(data: dict):
 def verify_forgot_password_token(token: str, credentials_exception):
     try:
         payload = jwt.decode(token, FORGOT_PASSWORD_SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if not email:
+        if email := payload.get("sub"):
+            token_data = schemas.TokenData(email=email)
+        else:
             raise credentials_exception
-        token_data = schemas.TokenData(email=email)
         return token_data
-    except JWTError:
-        raise credentials_exception
+    except JWTError as e:
+        raise credentials_exception from e

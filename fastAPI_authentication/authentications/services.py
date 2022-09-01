@@ -17,19 +17,16 @@ class Authentication:
 
     def check_password_validations(self, password, confirm_password):
         if password != confirm_password:
-            raise HTTPException(status_code=400, detail=f"Password Do not Match")
-        if not re.fullmatch(r'^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$', password):
-            raise HTTPException(status_code=400, detail="Password must be 8 characters long\n"
-                                                        "Password must contain at-least 1 uppercase, 1 lowercase, "
-                                                        "and 1 special character")
+            raise HTTPException(status_code=400, detail="Password Do not Match")
+        if not re.fullmatch('^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$', password):
+            raise HTTPException(status_code=400, detail="Password must be 8 characters long\nPassword must contain at-least 1 uppercase, 1 lowercase, and 1 special character")
         return True
 
     def register(self, db: Session):
-        user = db.query(models.User).filter(models.User.email == self.request.email).first()
-        if user:
-            raise HTTPException(status_code=409, detail=f"Email-ID Already Exists")
+        if user := db.query(models.User).filter(models.User.email == self.request.email).first():
+            raise HTTPException(status_code=409, detail="Email-ID Already Exists")
         if not re.fullmatch(r"^[a-z\d]+[\._]?[a-z\d]+[@]\w+[.]\w{2,3}$", self.request.email):
-            raise HTTPException(status_code=401, detail=f"Invalid Email-ID format")
+            raise HTTPException(status_code=401, detail="Invalid Email-ID format")
 
         self.check_password_validations(self.request.password, self.request.confirm_password)
 
@@ -48,10 +45,10 @@ class Authentication:
         user = db.query(models.User).filter(models.User.email == self.request.username).first()
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail=f"Invalid Credentials")
+                                detail="Invalid Credentials")
         if not Hash.verify(user.password, self.request.password):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail=f"Incorrect Password")
+                                detail="Incorrect Password")
 
         access_token = tokens.create_access_token(data={"sub": user.email})
         refreshToken = tokens.create_refresh_token(data={"sub": user.email})
@@ -60,20 +57,19 @@ class Authentication:
     def forgot_password(self, db: Session):
         user = db.query(models.User).filter(models.User.email == self.request.email).first()
         if not user:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Email-ID do not Exists")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Email-ID do not Exists")
         forgot_password_token = tokens.create_forgot_password_token(data={"sub": user.email})
-        return {"Reset Password Link": RESET_WEBSITE_LINK+'/'+forgot_password_token}
+        return {"Reset Password Link": f'{RESET_WEBSITE_LINK}/{forgot_password_token}', "forgot_password_token": forgot_password_token}
 
     def reset_password(self, reset_token, db: Session):
-        email = tokens.verify_forgot_password_token(reset_token, HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"Invalid/Expired Token"))
+        email = tokens.verify_forgot_password_token(reset_token, HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                                                               detail="Invalid/Expired Token"))
         if not email:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Incorrect/Expired Token")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Incorrect/Expired Token")
 
         self.check_password_validations(self.request.password, self.request.confirm_password)
 
         email = getattr(email, 'email')
-
         user_data = db.query(models.User).filter(models.User.email == email).first()
         user_data.password = Hash.bcrypt(self.request.password)
 

@@ -1,10 +1,8 @@
-import os
 import re
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from fastAPI_authentication import models
-from hashing import Hash
 
 
 class UserProfile:
@@ -13,7 +11,7 @@ class UserProfile:
 
     def check_password_validations(self, password, confirm_password):
         if password != confirm_password:
-            raise HTTPException(status_code=400, detail=f"Password Do not Match")
+            raise HTTPException(status_code=400, detail="Password Do not Match")
         if not re.fullmatch(r'^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$', password):
             raise HTTPException(status_code=400, detail="Password must be 8 characters long\n"
                                                         "Password must contain at-least 1 uppercase, 1 lowercase, "

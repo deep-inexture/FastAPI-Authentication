@@ -1,13 +1,5 @@
-import config
 from fastapi import FastAPI
-from fastapi_jwt_auth import AuthJWT
-from fastapi_jwt_auth.exceptions import AuthJWTException
-from fastAPI_authentication import exceptions, constants
-
-
-@AuthJWT.load_config
-def get_config():
-    return config.Settings()
+from fastAPI_authentication import constants
 
 
 def create_app():
@@ -15,7 +7,6 @@ def create_app():
         title='FastAPI Authentication Routes',
         description=constants.DESCRIPTION,
         version='1.0.0',
-        exception_handlers={AuthJWTException: exceptions.authjwt_exception_handler},
     )
 
     from fastAPI_authentication.authentications import authentication
